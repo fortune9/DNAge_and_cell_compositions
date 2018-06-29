@@ -632,14 +632,22 @@ params<-parse_params(inputs[1])
 message("# Reading beta values")
 #betaFile<-"GSE67751.beta.csv.gz"
 betas<-NULL
+library(data.table) # reading will be faster
 if(grepl("\\.gz$",params$betafile,ignore.case=T))
 {
-	betas<-read.table(gzfile(params$betafile),sep=params$fieldsep, head=T, row.names=1)
+	#betas<-read.table(gzfile(params$betafile),sep=params$fieldsep, head=T, row.names=1)
+	betas<-fread(paste("gzip -dc",params$betafile),
+				 sep=params$fieldsep, head=T)
 }else
 {
-	betas<-read.table(params$betafile, sep=params$fieldsep, head=T, row.names=1)
+	#betas<-read.table(params$betafile, sep=params$fieldsep, head=T, row.names=1)
+	betas<-fread(params$betafile, sep=params$fieldsep, head=T)
 }
 
+# need further processing for betas by fread
+tmp.names<-betas[[1]];
+betas<-as.matrix(betas[,-1])
+rownames(betas)<-tmp.names
 
 require(RPMM)
 library(WGCNA)
@@ -688,7 +696,7 @@ if ( fastImputation || nSamples==1 )
 } # end of if (! fastImputation )
 
 # STEP 3: Data normalization (each sample requires about 8 seconds). It would be straightforward to parallelize this operation.
-
+gc()
 message("# Normalizing with BMIQcalibration")
 if (normalizeData)
 {

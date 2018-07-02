@@ -150,14 +150,21 @@ if(params$type == "hannum" || params$type == "horvath")
 
 message("# Reading beta values")
 #betaFile<-"GSE67751.beta.csv.gz"
+library(data.table)
 betas<-NULL
 if(grepl("\\.gz$",params$betafile,ignore.case=T))
 {
-	betas<-read.table(gzfile(params$betafile),sep=params$fieldsep)
+	#betas<-read.table(gzfile(params$betafile),sep=params$fieldsep)
+	betas<-fread(paste("gzip -dc", params$betafile),
+				 sep=params$fieldsep, head=T)
 }else
 {
-	betas<-read.table(params$betafile, sep=params$fieldsep)
+	betas<-fread(params$betafile, sep=params$fieldsep, head=T)
 }
+# need some extra processing
+tmp.names<-betas[[1]];
+betas<-as.matrix(betas[,-1])
+rownames(betas)<-tmp.names
 
 message("# Computing DNAge")
 

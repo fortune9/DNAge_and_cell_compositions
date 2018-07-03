@@ -709,7 +709,9 @@ if(grepl("\\.gz$", out, ignore.case=T)) {
 }else{
 	zz<-file(out,"w")
 }
-write.table(betas,file=zz,col=T,row=T,quote=F,sep=",")
+#write.table(betas,file=zz,col=T,row=T,quote=F,sep=",")
+write.csv(betas,file=zz,quote=F) # this will add one empty column in
+# the header line, important for being read by data.table
 close(zz)
 
 message("Normalization is done")

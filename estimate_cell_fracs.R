@@ -204,7 +204,8 @@ values *are* also saved in a separate file.
 infoFile:
 a file containing the samples' information, one row
 per sample. One column 'sampleOrder' can be used to match the samples
-in this file and those in the 'dataFile'. The field separator is
+in this file and those in the 'dataFile'; otherwise the samples in
+these two files are assumed in the same order. The field separator is
 comma in default, but changeable by the next option.
 
 infoSep:
